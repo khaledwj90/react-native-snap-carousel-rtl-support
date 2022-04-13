@@ -232,7 +232,7 @@ export function tinderAnimatedStyles(index, animatedValue, carouselProps, cardOf
     const getMainTranslateFromScale = (cardIndex, scale) => {
         const centerFactor = 1 / scale * cardIndex;
         const result = Math.round(sizeRef * centerFactor);
-        return I18nManager.isRTL === false ? -result : result;
+        return I18nManager.isRTL === false||IS_ANDROID ? -result : result;
     };
 
     const getSecondaryTranslateFromScale = (cardIndex, scale) => {
@@ -240,7 +240,7 @@ export function tinderAnimatedStyles(index, animatedValue, carouselProps, cardOf
     };
 
     return IS_ANDROID ? {
-        // elevation: carouselProps.data.length - index, // fix zIndex bug visually, but not from a logic point of view
+        elevation: I18nManager.isRTL === true? carouselProps.data.length - index:undefined, // fix zIndex bug visually, but not from a logic point of view
         opacity: animatedValue.interpolate({
             inputRange: [-3, -2, -1, 0, 1],
             outputRange: [0, peekingCardsOpacity, peekingCardsOpacity, 1, 0],
