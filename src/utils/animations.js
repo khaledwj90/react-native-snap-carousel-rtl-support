@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform ,I18nManager} from 'react-native';
 
 const IS_ANDROID = Platform.OS === 'android';
 
@@ -294,14 +294,14 @@ export function tinderAnimatedStyles (index, animatedValue, carouselProps, cardO
         }, {
             rotate: animatedValue.interpolate({
                 inputRange: [-1, 0],
-                outputRange: ['-22deg', '0deg'],
+                outputRange: I18nManager.isRTL === false?['-22deg', '0deg']:['22deg', '0deg'],
                 extrapolate: 'clamp'
             })
         }, {
             [mainTranslateProp]: animatedValue.interpolate({
                 inputRange: [-1, 0, 1, 2, 3],
                 outputRange: [
-                    -sizeRef * 1.1,
+                    I18nManager.isRTL === false? (-sizeRef * 1.1):(sizeRef * 1.1),
                     0,
                     getMainTranslateFromScale(1, card1Scale),
                     getMainTranslateFromScale(2, card2Scale),
