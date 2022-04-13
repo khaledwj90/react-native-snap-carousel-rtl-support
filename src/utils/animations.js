@@ -1,4 +1,4 @@
-import { Platform ,I18nManager} from 'react-native';
+import {Platform, I18nManager} from 'react-native';
 
 const IS_ANDROID = Platform.OS === 'android';
 
@@ -12,7 +12,7 @@ const IS_ANDROID = Platform.OS === 'android';
 //     index * sizeRef, // active
 //     (index + 1) * sizeRef // active - 1
 // ]
-export function getInputRangeFromIndexes (range, index, carouselProps) {
+export function getInputRangeFromIndexes(range, index, carouselProps) {
     const sizeRef = carouselProps.vertical ? carouselProps.itemHeight : carouselProps.itemWidth;
     let inputRange = [];
 
@@ -26,14 +26,15 @@ export function getInputRangeFromIndexes (range, index, carouselProps) {
 // Default behavior
 // Scale and/or opacity effect
 // Based on props 'inactiveSlideOpacity' and 'inactiveSlideScale'
-export function defaultScrollInterpolator (index, carouselProps) {
+export function defaultScrollInterpolator(index, carouselProps) {
     const range = [1, 0, -1];
     const inputRange = getInputRangeFromIndexes(range, index, carouselProps);
     const outputRange = [0, 1, 0];
 
-    return { inputRange, outputRange };
+    return {inputRange, outputRange};
 }
-export function defaultAnimatedStyles (index, animatedValue, carouselProps) {
+
+export function defaultAnimatedStyles(index, animatedValue, carouselProps) {
     let animatedOpacity = {};
     let animatedScale = {};
 
@@ -66,7 +67,7 @@ export function defaultAnimatedStyles (index, animatedValue, carouselProps) {
 // Shift animation
 // Same as the default one, but the active slide is also shifted up or down
 // Based on prop 'inactiveSlideShift'
-export function shiftAnimatedStyles (index, animatedValue, carouselProps) {
+export function shiftAnimatedStyles(index, animatedValue, carouselProps) {
     let animatedOpacity = {};
     let animatedScale = {};
     let animatedTranslate = {};
@@ -102,8 +103,8 @@ export function shiftAnimatedStyles (index, animatedValue, carouselProps) {
     return {
         ...animatedOpacity,
         transform: [
-            { ...animatedScale },
-            { ...animatedTranslate }
+            {...animatedScale},
+            {...animatedTranslate}
         ]
     };
 }
@@ -113,16 +114,17 @@ export function shiftAnimatedStyles (index, animatedValue, carouselProps) {
 // WARNING: The effect had to be visually inverted on Android because this OS doesn't honor the `zIndex`property
 // This means that the item with the higher zIndex (and therefore the tap receiver) remains the one AFTER the currently active item
 // The `elevation` property compensates for that only visually, which is not good enough
-export function stackScrollInterpolator (index, carouselProps) {
+export function stackScrollInterpolator(index, carouselProps) {
     const range = IS_ANDROID ?
         [1, 0, -1, -2, -3] :
         [3, 2, 1, 0, -1];
     const inputRange = getInputRangeFromIndexes(range, index, carouselProps);
     const outputRange = range;
 
-    return { inputRange, outputRange };
+    return {inputRange, outputRange};
 }
-export function stackAnimatedStyles (index, animatedValue, carouselProps, cardOffset) {
+
+export function stackAnimatedStyles(index, animatedValue, carouselProps, cardOffset) {
     const sizeRef = carouselProps.vertical ? carouselProps.itemHeight : carouselProps.itemWidth;
     const translateProp = carouselProps.vertical ? 'translateY' : 'translateX';
 
@@ -204,16 +206,17 @@ export function stackAnimatedStyles (index, animatedValue, carouselProps, cardOf
 // WARNING: The effect had to be visually inverted on Android because this OS doesn't honor the `zIndex`property
 // This means that the item with the higher zIndex (and therefore the tap receiver) remains the one AFTER the currently active item
 // The `elevation` property compensates for that only visually, which is not good enough
-export function tinderScrollInterpolator (index, carouselProps) {
+export function tinderScrollInterpolator(index, carouselProps) {
     const range = IS_ANDROID ?
         [1, 0, -1, -2, -3] :
         [3, 2, 1, 0, -1];
     const inputRange = getInputRangeFromIndexes(range, index, carouselProps);
     const outputRange = range;
 
-    return { inputRange, outputRange };
+    return {inputRange, outputRange};
 }
-export function tinderAnimatedStyles (index, animatedValue, carouselProps, cardOffset) {
+
+export function tinderAnimatedStyles(index, animatedValue, carouselProps, cardOffset) {
     const sizeRef = carouselProps.vertical ? carouselProps.itemHeight : carouselProps.itemWidth;
     const mainTranslateProp = carouselProps.vertical ? 'translateY' : 'translateX';
     const secondaryTranslateProp = carouselProps.vertical ? 'translateX' : 'translateY';
@@ -228,7 +231,8 @@ export function tinderAnimatedStyles (index, animatedValue, carouselProps, cardO
 
     const getMainTranslateFromScale = (cardIndex, scale) => {
         const centerFactor = 1 / scale * cardIndex;
-        return -Math.round(sizeRef * centerFactor);
+        const result = Math.round(sizeRef * centerFactor);
+        return I18nManager.isRTL === false ? -result : result;
     };
 
     const getSecondaryTranslateFromScale = (cardIndex, scale) => {
@@ -294,14 +298,14 @@ export function tinderAnimatedStyles (index, animatedValue, carouselProps, cardO
         }, {
             rotate: animatedValue.interpolate({
                 inputRange: [-1, 0],
-                outputRange: I18nManager.isRTL === false?['-22deg', '0deg']:['22deg', '0deg'],
+                outputRange: I18nManager.isRTL === false ? ['-22deg', '0deg'] : ['22deg', '0deg'],
                 extrapolate: 'clamp'
             })
         }, {
             [mainTranslateProp]: animatedValue.interpolate({
                 inputRange: [-1, 0, 1, 2, 3],
                 outputRange: [
-                    I18nManager.isRTL === false? (-sizeRef * 1.1):(sizeRef * 1.1),
+                    I18nManager.isRTL === false ? (-sizeRef * 1.1) : (sizeRef * 1.1),
                     0,
                     getMainTranslateFromScale(1, card1Scale),
                     getMainTranslateFromScale(2, card2Scale),
